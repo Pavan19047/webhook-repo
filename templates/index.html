@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>GitHub Activity Feed</title>
+  <style>
+    body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; background: #f5f5f5; }
+    h1 { color: #333; }
+    #feed { list-style: none; padding: 0; }
+    #feed li {
+      background: white;
+      padding: 14px 18px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border-left: 5px solid #ccc;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    .PUSH { border-color: #4CAF50; }
+    .PULL_REQUEST { border-color: #2196F3; }
+    .MERGE { border-color: #9C27B0; }
+    #status { color: #888; font-size: 0.85em; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>🔔 GitHub Activity Feed</h1>
+  <p id="status">Loading...</p>
+  <ul id="feed"></ul>
+
+  <script>
+    function fetchEvents() {
+      fetch("/events")
+        .then(res => res.json())
+        .then(data => {
+          const feed = document.getElementById("feed");
+          feed.innerHTML = "";
+          data.forEach(event => {
+            const li = document.createElement("li");
+            li.className = event.action;
+            li.textContent = event.message;
+            feed.appendChild(li);
+          });
+          document.getElementById("status").textContent =
+            "Last updated: " + new Date().toLocaleTimeString();
+        });
+    }
+
+    fetchEvents();
+    setInterval(fetchEvents, 15000); // Poll every 15 seconds
+  </script>
+</body>
+</html>
